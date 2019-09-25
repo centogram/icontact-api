@@ -101,22 +101,18 @@ const contact: IContact = {
   email: emailAddress,
   firstName,
   lastName,
-  subsciptions: [
-    {
-      email: emailAddress,
-      listId,
-      status: 'normal'
-    },
-  ],
 };
 
-iContactAPI.getContacts({ email: contact.email }).then((results) => {
+iContactAPI.getContacts({ email: contact.email }).then(async (results) => {
   if (results.total === 0) {
-    return iContactAPI.addContacts([contact]);
+    let result = await iContactAPI.addContacts([contact]);
+    return result.contacts[0];
   } else {
-    return iContactAPI.updateContact(results.contacts[0].contactId, contact);
+    let result = await iContactAPI.updateContact(results.contacts[0].contactId, contact);
+    return result.contact;
   }
 }).then((results) => {
+  return iContactAPI.subscribeContactToList(contact.contactId, listId); 
   console.log(results);
 }).catch((err) => {
   console.log(err);
@@ -143,13 +139,16 @@ var contact = {
   ],
 };
 
-iContactAPI.getContacts({ email: contact.email }).then(function (results) {
+iContactAPI.getContacts({ email: contact.email }).then(async function (results) {
   if (results.total === 0) {
-    return iContactAPI.addContacts([contact]);
+    let result = await iContactAPI.addContacts([contact]);
+    return result.contacts[0];
   } else {
-    return iContactAPI.updateContact(results.contacts[0].contactId, contact);
+    let result = await iContactAPI.updateContact(results.contacts[0].contactId, contact);
+    return result.contact;
   }
 }).then(function (results) {
+  return iContactAPI.subscribeContactToList(contact.contactId, listId); 
   console.log(results);
 }).catch(function (err) {
   console.log(err);
@@ -166,4 +165,4 @@ Run them with
 $ npm test
 ```
 
-Testing will require an iContact Pro account. Provide the credentials in an `.env` file, following the example in `.env.example`.
+Testing will require an iContact Pro account. Provide the credentials in an `.env` file, following the example in `.env.example`.  var 
